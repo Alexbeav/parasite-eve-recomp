@@ -1,0 +1,8 @@
+[submodule "psxrecomp"]
+	path = psxrecomp
+	url = https://github.com/Alexbeav/psxrecomp.git
+	branch = release/wave2-v0.3.0-source
+[submodule "recomp-ui"]
+	path = recomp-ui
+	url = https://github.com/mstan/recomp-ui.git
+	branch = master

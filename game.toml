@@ -1,0 +1,64 @@
+# Autofilled by tools/new_project_layout/probe_disc.py from your legal dump.
+# Review before shipping. Runtime quirks / overlay seeds still need hand work.
+
+[game]
+name = "Parasite Eve"
+id = "SLUS-00662"
+players = 1
+exe = "disc/SLUS_006.62"
+discs = [
+    "disc/Parasite Eve (USA) (Disc 1).cue",
+    "disc/Parasite Eve (USA) (Disc 2).cue",
+]
+disc_serials = [
+    "SLUS-00662",
+    "SLUS-00668",
+]
+load_address = "0x80010000"
+entry_pc = "0x80072534"
+text_size = "0x001EE000"
+stack_base = "0x801FFFF0"
+
+# Digests are for data Track 01 (first BINARY FILE / TRACK 01).
+[prepare_disc]
+out_dir = "disc"
+bin_name = "Parasite Eve (USA) (Disc 1).bin"
+cue_name = "Parasite Eve (USA) (Disc 1).cue"
+boot_exe = "SLUS_006.62"
+known_sizes = [495531120]
+known_md5 = [
+  "efae1df4faf4aadbfd4dc3aa022296cf",
+]
+known_sha1 = [
+  "c339455d5b1dae04f77c2ee847d0932adaf2e84b",
+]
+known_crc32 = [
+  "488641e0",
+]
+
+[recompiler]
+seeds = "seeds/ghidra_funcs.txt"
+out_dir = "generated"
+strict = true
+
+[runtime]
+window_title = "Parasite Eve Recompiled"
+memcard_dir = "saves"
+
+[video]
+renderer = "opengl"
+aspect_ratio = "4:3"
+
+[controller]
+default_mode = "digital"
+
+# Online mount gate: digests + track count + optional TOC fingerprint
+# (see docs/NETPLAY.md).
+[netplay]
+required_disc_fps = [
+    "9913da87c9c4ecacce11878e7bb1459d0e1f7e633654f60ea5c32e30004b53b3",
+    "a45f792bd8e701b3d48d9c18df2f9e205137973a399c8a9bd20f38b22647262d",
+]
+require_cue = true
+required_tracks = 1
+required_disc_fp = "9913da87c9c4ecacce11878e7bb1459d0e1f7e633654f60ea5c32e30004b53b3"

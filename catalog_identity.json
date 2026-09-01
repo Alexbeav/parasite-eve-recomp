@@ -1,0 +1,48 @@
+{
+  "format_version": 1,
+  "game": {
+    "name": "Parasite Eve",
+    "id": "SLUS-00662",
+    "boot_exe": "SLUS_006.62"
+  },
+  "marketing": {
+    "description": "",
+    "publisher": "",
+    "year": "",
+    "region": "USA",
+    "players": 1
+  },
+  "rom_identity": {
+    "cue_name": "Parasite Eve (USA) (Disc 1).cue",
+    "bin_name": "Parasite Eve (USA) (Disc 1).bin",
+    "track_counts": [
+      1
+    ],
+    "require_cue": true,
+    "data_track": {
+      "size": 495531120,
+      "md5": "efae1df4faf4aadbfd4dc3aa022296cf",
+      "sha1": "c339455d5b1dae04f77c2ee847d0932adaf2e84b",
+      "crc32": "488641e0"
+    },
+    "disc_fp": "9913da87c9c4ecacce11878e7bb1459d0e1f7e633654f60ea5c32e30004b53b3"
+  },
+  "exe": {
+    "load_address": "0x80010000",
+    "entry_pc": "0x80072534",
+    "text_size": "0x001EE000",
+    "stack_base": "0x801FFFF0"
+  },
+  "seeds": {
+    "count": 1300,
+    "source": "boot_exe_jal"
+  },
+  "warnings": [
+    "cue has only 1 TRACK \u2014 Track-01-only dumps fail multi-track netplay/catalog gates; prefer a full Redump cue."
+  ],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}

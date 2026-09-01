@@ -1,0 +1,52 @@
+[project]
+title = "Parasite Eve"
+slug = "parasite-eve-recomp"
+region = "USA NTSC-U"
+revision = "SLUS-00662/SLUS-00668"
+track = "recompilation"
+intended_audience = "research"
+commercial_use_possible = false
+
+[retail_identity]
+disc_count = 2
+serials = ["SLUS-00662", "SLUS-00668"]
+boot_executables = ["SLUS_006.62", "SLUS_006.68"]
+executable_sha256 = "5d94938ee752e81ef375bd4493c9883850c25a86895f9cb0732cf3622b44351b"
+load_address = "0x80010000"
+entry_point = "0x80072534"
+stack_base = "0x801FFFF0"
+
+[framework]
+repository = "https://github.com/Alexbeav/psxrecomp.git"
+commit = "b5750bd13fb2366a13d0cf7f06ab9584bd2fd583"
+tree = "fd612c9effc0b400dfa867e017ceced854fe2f64"
+deterministic_build_identity_commit = "b5750bd13fb2366a13d0cf7f06ab9584bd2fd583"
+deterministic_build_identity_tree = "fd612c9effc0b400dfa867e017ceced854fe2f64"
+deterministic_link_commit = "6b74231479230e2c4d11d3e817af5d4a7739ae0b"
+deterministic_link_tree = "013602dcdd381ca6b9fe0361a4f156e191f8bff9"
+bios_profile_correction_commit = "b2430fa43602131b0d5c71d5d31ccf5b567f1601"
+bios_profile_correction_tree = "0c2ae3850af9698cadb3b2114ff633087f875326"
+ci_correction_parent_commit = "e6d054de1538881cd81dcf3592de1f561afdbb5b"
+ci_correction_parent_tree = "cd6dc7efa7d3db466dc8608e7513c9039bc095be"
+release_base_commit = "afe9ab299aab0eeba1cc31f81bc4baf4e7fb2ab7"
+release_base_tree = "a9165efc45d6e865c6b9eb3637ce8d772d51662a"
+recomp_ui_commit = "4eda65430a431e5685ae0c515ebcd912c7843bff"
+license = "PolyForm Noncommercial 1.0.0"
+
+[studio]
+repository = "https://github.com/TechnicallyComputers/retcomm-studio"
+commit = "249422969c1c59ac2a1f8aa2299e876a7133998e"
+
+[release]
+version = "0.3.3"
+platform = "windows-x64"
+graduation_state = "bootstrap_verified"
+private_gameplay_confirmed = true
+public_package_status = "local_candidate_audited"
+setup_package_audit_failures = 0
+cleanroom_runtime_sha256 = "2748570FE0F7E1BC1AAFC11C17C312764FED3987E3190D0A70F3544EE8FCE28C"
+disc_1_headless_boot_frames = 604
+disc_2_headless_boot_frames = 701
+disc_1_exact_package_telemetry_frames = 2573
+disc_2_exact_package_telemetry_frames = 3821
+disc_change_status = "connected_manual_route_pending"
