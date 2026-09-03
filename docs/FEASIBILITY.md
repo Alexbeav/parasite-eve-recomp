@@ -1,6 +1,6 @@
 # Parasite Eve release feasibility
 
-Status: `bootstrap_verified`; corrected local `v0.3.3` package qualified
+Status: `bootstrap_verified`; four-platform `v0.3.5` package pending exact-package gates
 
 The operator confirmed that the earlier private build reaches gameplay. The
 new frozen-source build also passed measured headless startup on both supported
@@ -37,3 +37,11 @@ deterministic-link correction `6b742314`. That correction is a child of BIOS cor
 `b2430fa4`. The BIOS correction is a child of CI correction `e6d054de`.
 The CI correction is an additive child of frozen release base `afe9ab29`.
 Publication and remote download verification are separate gates.
+
+## v0.3.5 three-platform refresh
+
+The candidate targets Windows x64, Linux x64, macOS Apple Silicon ARM64, and
+macOS Intel x64. The setup package uses an additive framework correction that
+excludes two non-SDK helpers with developer-machine paths. Each exact package
+must pass the payload, setup, startup, responsiveness, and clean-exit gates on
+its declared platform before publication.

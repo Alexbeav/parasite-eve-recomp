@@ -124,3 +124,9 @@ These ports are developed by a hobbyist (a DevSecOps engineer, not a game
 programmer) with substantial AI assistance. Every release must pass its
 recorded build, package, and gameplay gates. AI writes most of the code, but I
 always test it myself before pushing. Bug reports are welcome.
+
+## v0.3.5 three-platform candidate
+
+The next release targets Windows x64, Linux x64, macOS Apple Silicon ARM64,
+and macOS Intel x64. These packages remain candidates until the exact archives
+pass the required native setup, startup, responsiveness, and clean-exit gates.

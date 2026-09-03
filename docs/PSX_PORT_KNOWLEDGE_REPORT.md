@@ -3,7 +3,7 @@
 - Date: 2026-09-01
 - Retail identity: USA `SLUS-00662` and `SLUS-00668`
 - Architecture lane: source-only owned-input setup host
-- Release target: Windows x64, version `0.3.3`
+- Release target: Windows x64, Linux x64, macOS ARM64, and macOS x64; candidate version `0.3.5`
 
 ## Current state
 
@@ -19,7 +19,7 @@ in-game disc change remains open and is not inferred from independent startup.
 
 ## Release controls
 
-- Framework: `b5750bd13fb2366a13d0cf7f06ab9584bd2fd583`
+- Framework: 94ea3b28c1b2f10f4b0ed960145bc96d415f2c36
 - Deterministic build identity: `b5750bd13fb2366a13d0cf7f06ab9584bd2fd583`
 - Deterministic link correction: `6b74231479230e2c4d11d3e817af5d4a7739ae0b`
 - BIOS profile correction: `b2430fa43602131b0d5c71d5d31ccf5b567f1601`
@@ -28,7 +28,7 @@ in-game disc change remains open and is not inferred from independent startup.
 - Recomp-UI: `4eda65430a431e5685ae0c515ebcd912c7843bff`
 - RetComM Studio: `249422969c1c59ac2a1f8aa2299e876a7133998e`
 - Distribution: owned input only
-- Platform claim: Windows x64 only
+- Platform claim: pending exact-package gates on all four targets
 
 ## Open gates
 
@@ -41,3 +41,10 @@ in-game disc change remains open and is not inferred from independent startup.
 
 The release work uses `PSX-DISC-001`, `PSX-PUB-004`, `PSX-PUB-006`,
 `PSX-WIN-005`, `PSX-WIN-006`, and the release regression ledger.
+
+## v0.3.5 three-platform refresh
+
+The source now binds the package-only privacy correction and targets Windows
+x64, Linux x64, macOS ARM64, and macOS x64. The replacement build-only CI,
+complete archive audit, and native package gates remain required. This source
+change does not publish a release or claim platform support.
