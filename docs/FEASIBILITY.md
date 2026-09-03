@@ -45,3 +45,10 @@ macOS Intel x64. The setup package uses an additive framework correction that
 excludes two non-SDK helpers with developer-machine paths. Each exact package
 must pass the payload, setup, startup, responsiveness, and clean-exit gates on
 its declared platform before publication.
+
+## 2026-09-03 portable Linux package
+
+The release workflow now builds Linux in a pinned Ubuntu 20.04 container.
+The package gate rejects a setup host or emitter that needs a glibc version
+newer than 2.31. This keeps the release compatible with the qualified Rocky
+Linux 9 host. Windows and both macOS builds keep their existing runners.

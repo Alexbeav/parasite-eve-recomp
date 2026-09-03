@@ -152,6 +152,7 @@ jobs:
     name: ${{ matrix.artifact }}
     needs: prepare
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -159,6 +160,9 @@ jobs:
           - os: ubuntu-24.04
             artifact: linux-x64
             shell: bash
+            # Ubuntu 20.04 has glibc 2.31. Pin the amd64 image so the
+            # published package can start on Rocky Linux 9 (glibc 2.34).
+            container: ubuntu:20.04@sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a
           - os: windows-2022
             artifact: windows-x64
             shell: 'msys2 {0}'
@@ -177,6 +181,30 @@ jobs:
       # Rename to match your packager (e.g. BPE_RELEASE_VERSION).
       RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
     steps:
+      - name: Bootstrap portable Linux container
+        if: matrix.artifact == 'linux-x64'
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates curl git libstdc++6 python3 python3-pip unzip
+          python3 -m pip install --no-cache-dir \
+            'cmake==3.30.9' 'tomli==2.2.1'
+
+          # Focal does not package glslc. Use two exact LunarG Focal SDK
+          # packages. Their declared glibc floor is 2.29.
+          curl -fsSLo /tmp/shaderc.deb \
+            https://packages.lunarg.com/vulkan/1.3.283/pool/main/s/shaderc/shaderc_2024.1~rc1-1lunarg20.04-1_amd64.deb
+          curl -fsSLo /tmp/vulkan-headers.deb \
+            https://packages.lunarg.com/vulkan/1.3.283/pool/main/v/vulkan-headers/vulkan-headers_1.3.283.0~rc1-1lunarg20.04-1_all.deb
+          printf '%s  %s\n' \
+            '2e78ad32359737d3654dd49c412f6ff16d4da0c5b2dfc80485aacb0d8d6f70e3' /tmp/shaderc.deb \
+            '1a55db9d5c356580d77331f63359b351e600e05fff2ca63d6835b4d7809c66b1' /tmp/vulkan-headers.deb \
+            | sha256sum -c -
+          dpkg -i /tmp/shaderc.deb /tmp/vulkan-headers.deb
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -219,15 +247,22 @@ jobs:
       - name: Install deps (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
+          export DEBIAN_FRONTEND=noninteractive
+          export TZ=Etc/UTC
+          SUDO=''
+          if command -v sudo >/dev/null 2>&1; then SUDO=sudo; fi
+          ${SUDO} apt-get update
           # X11 + xtst required when FetchContent builds SDL3 (XTEST).
-          sudo apt-get install -y --no-install-recommends \
+          ${SUDO} apt-get install -y --no-install-recommends \
             build-essential cmake ninja-build pkg-config \
             libsdl2-dev libgl1-mesa-dev libxtst-dev \
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxkbcommon-dev \
             libasound2-dev libpulse-dev libudev-dev zip \
-            libvulkan-dev glslc
+            libvulkan-dev binutils ccache
+          if ! command -v glslc >/dev/null 2>&1; then
+            ${SUDO} apt-get install -y --no-install-recommends glslc
+          fi
 
       - name: Install deps (macOS)
         if: runner.os == 'macOS'
@@ -304,19 +339,21 @@ jobs:
             echo "SDL3 source cache hit"
             exit 0
           fi
-          if [[ -f psxrecomp/tools/ci/prefetch_sdl3.sh ]]; then
+          if [[ -f psxrecomp/tools/ci/prefetch_sdl3.sh ]] && \
+              curl --retry-all-errors --version >/dev/null 2>&1; then
             chmod +x psxrecomp/tools/ci/prefetch_sdl3.sh
             bash psxrecomp/tools/ci/prefetch_sdl3.sh --out-dir "${OUT}"
             exit 0
           fi
-          # Submodule may predate the helper — inline HTTP/1.1 prefetch.
-          echo "prefetch_sdl3.sh missing; using inline curl --http1.1"
+          # The helper can be missing or can require a newer curl. Use the
+          # exact inline fallback on older release environments.
+          echo "using compatible inline SDL3 prefetch"
           mkdir -p .cache
           VER=3.4.10
           SHA=12b34280415ec8418c864408b93d008a20a6530687ee613d60bfbd20411f2785
           URL="https://github.com/libsdl-org/SDL/releases/download/release-${VER}/SDL3-${VER}.tar.gz"
           TAR=".cache/SDL3-${VER}.tar.gz"
-          curl -fsSL --http1.1 --retry 5 --retry-all-errors --retry-delay 2 -o "${TAR}" "${URL}"
+          curl -fsSL --http1.1 --retry 5 --retry-connrefused --retry-delay 2 -o "${TAR}" "${URL}"
           echo "${SHA}  ${TAR}" | sha256sum -c -
           rm -rf "${OUT}.extracting"
           mkdir -p "${OUT}.extracting"
@@ -379,7 +416,7 @@ jobs:
           fi
 
       - name: Setup ccache (Linux/macOS host build)
-        if: runner.os != 'Windows'
+        if: runner.os == 'macOS'
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: setup-host-${{ matrix.artifact }}
@@ -578,6 +615,44 @@ jobs:
             exit 1
           fi
           echo "mod catalog verified in ${ZIP} (no developer-channel packages)"
+
+      - name: Verify Linux glibc floor
+        if: matrix.artifact == 'linux-x64'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t ZIPS < <(find dist -maxdepth 1 -type f -name '*-linux-x64.zip' -print)
+          if [[ "${#ZIPS[@]}" -ne 1 ]]; then
+            echo "::error::expected one Linux archive, found ${#ZIPS[@]}"
+            exit 1
+          fi
+          ZIP="${ZIPS[0]}"
+          STAGE="${RUNNER_TEMP}/glibc-floor"
+          rm -rf "${STAGE}"
+          mkdir -p "${STAGE}"
+          unzip -q "${ZIP}" -d "${STAGE}"
+          mapfile -t SETUP_HOSTS < <(find "${STAGE}" -maxdepth 1 -type f -perm -u+x -print)
+          if [[ "${#SETUP_HOSTS[@]}" -ne 1 ]]; then
+            echo "::error::expected one executable setup host, found ${#SETUP_HOSTS[@]}"
+            exit 1
+          fi
+          MAX_ALLOWED=2.31
+          for binary in \
+              "${SETUP_HOSTS[0]}" \
+              "${STAGE}/psxrecomp/recompiler/build/psxrecomp-game" \
+              "${STAGE}/psxrecomp/recompiler/build/psxrecomp-bios"; do
+            test -f "${binary}"
+            relative="${binary#${STAGE}/}"
+            max_required="$(objdump -T "${binary}" \
+              | sed -n 's/.*GLIBC_\([0-9][0-9.]*\).*/\1/p' \
+              | sort -V | tail -1)"
+            test -n "${max_required}"
+            echo "${relative}: max GLIBC_${max_required}"
+            if [[ "$(printf '%s\n%s\n' "${MAX_ALLOWED}" "${max_required}" | sort -V | tail -1)" != "${MAX_ALLOWED}" ]]; then
+              echo "::error::${relative} requires GLIBC_${max_required}; maximum is GLIBC_${MAX_ALLOWED}"
+              exit 1
+            fi
+          done
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
