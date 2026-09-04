@@ -4,5 +4,5 @@
 	branch = release/wave2-v0.3.0-source
 [submodule "recomp-ui"]
 	path = recomp-ui
-	url = https://github.com/mstan/recomp-ui.git
+	url = https://github.com/Alexbeav/recomp-ui.git
 	branch = master

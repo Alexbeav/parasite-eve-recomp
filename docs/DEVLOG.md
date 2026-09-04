@@ -37,3 +37,11 @@ Disc 1 and SCPH-1001 inputs. Both hidden builds produced runtime SHA-256
 `2748570FE0F7E1BC1AAFC11C17C312764FED3987E3190D0A70F3544EE8FCE28C`.
 The final exact-ZIP build matched that hash. Headless startup reached frame
 2573 on Disc 1 and frame 3821 on Disc 2. Both runs reported no fatal event.
+
+## 2026-09-04 v0.3.6 POSIX setup-copy candidate
+
+This candidate pins PSXRecomp f1d98082354641dd48750045517c23fe9ef13f34 and recomp-ui be8ac1d03ee19d55394b5a5f2d9d1506edd56659.
+Linux and macOS packages use native CMake, Ninja, Python, C, and C++ tools.
+Windows keeps the portable toolchain route. This change does not change game
+code or the graduation state. Build-only CI and every exact-package release
+gate must pass before publication.

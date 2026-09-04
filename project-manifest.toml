@@ -18,8 +18,8 @@ stack_base = "0x801FFFF0"
 
 [framework]
 repository = "https://github.com/Alexbeav/psxrecomp.git"
-commit = "e23a609982faa28106815a472ecf90b9c47271e3"
-tree = "3ef48bb8c76b6040263c3f83e776d41a5d58d064"
+commit = "f1d98082354641dd48750045517c23fe9ef13f34"
+tree = "2b1d537a1335a83752df4041f5ff55c170bd7877"
 deterministic_build_identity_commit = "b5750bd13fb2366a13d0cf7f06ab9584bd2fd583"
 deterministic_build_identity_tree = "fd612c9effc0b400dfa867e017ceced854fe2f64"
 deterministic_link_commit = "6b74231479230e2c4d11d3e817af5d4a7739ae0b"
@@ -30,7 +30,7 @@ ci_correction_parent_commit = "e6d054de1538881cd81dcf3592de1f561afdbb5b"
 ci_correction_parent_tree = "cd6dc7efa7d3db466dc8608e7513c9039bc095be"
 release_base_commit = "afe9ab299aab0eeba1cc31f81bc4baf4e7fb2ab7"
 release_base_tree = "a9165efc45d6e865c6b9eb3637ce8d772d51662a"
-recomp_ui_commit = "4eda65430a431e5685ae0c515ebcd912c7843bff"
+recomp_ui_commit = "be8ac1d03ee19d55394b5a5f2d9d1506edd56659"
 license = "PolyForm Noncommercial 1.0.0"
 
 [studio]
@@ -38,12 +38,12 @@ repository = "https://github.com/TechnicallyComputers/retcomm-studio"
 commit = "249422969c1c59ac2a1f8aa2299e876a7133998e"
 
 [release]
-version = "0.3.5"
+version = "0.3.6"
 platform = "multi-platform"
 supported_platforms = ["windows-x64", "linux-x64", "macos-arm64", "macos-x64"]
 graduation_state = "bootstrap_verified"
 private_gameplay_confirmed = true
-public_package_status = "v0.3.5_three_platform_candidate"
+public_package_status = "v0.3.6_three_platform_candidate"
 setup_package_audit_failures = 0
 cleanroom_runtime_sha256 = "2748570FE0F7E1BC1AAFC11C17C312764FED3987E3190D0A70F3544EE8FCE28C"
 disc_1_headless_boot_frames = 604

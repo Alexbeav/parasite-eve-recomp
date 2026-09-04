@@ -575,10 +575,21 @@ jobs:
             export BPE_RUNTIME_BIN_DIR=/mingw64/bin
           fi
           export RELEASE_VERSION
-          # Lean zip (no embedded toolchain/). RetComM / wizard download
-          # cmake-clang-v1; pass --embed-toolchain only for offline-first packs.
+          # Lean zip (no embedded toolchain/). Windows can download
+          # cmake-clang-v1; Linux/macOS use native tools from PATH.
+          # Pass --embed-toolchain only for offline-first packs.
           scripts/package_setup_release.sh build-ci "${{ matrix.artifact }}" build-recompiler
           ls -la dist/
+      - name: Verify platform setup instructions and controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP=$(ls dist/*-"${{ matrix.artifact }}".zip | head -1)
+          if command -v python3 >/dev/null 2>&1; then
+            python3 psxrecomp/tools/ci/audit_setup_package_platform_copy.py "${ZIP}"
+          else
+            python psxrecomp/tools/ci/audit_setup_package_platform_copy.py "${ZIP}"
+          fi
 
       - name: Verify zip ships the mod catalog
         shell: bash
