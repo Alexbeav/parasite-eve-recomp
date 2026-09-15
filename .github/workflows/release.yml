@@ -602,10 +602,10 @@ jobs:
           # artifact, not the intent.
           ZIP=$(ls dist/Parasite-Eve-Recompiled-*-"${{ matrix.artifact }}".zip | head -1)
           echo "checking ${ZIP}"
-          MANIFESTS=$(unzip -l "${ZIP}" | grep -c 'mods/packages/.*/manifest\.toml' || true)
+          MANIFESTS=$(unzip -l "${ZIP}" | grep -c 'mods/bundled/.*/manifest\.toml' || true)
           echo "mod manifests in zip: ${MANIFESTS}"
           if [[ "${MANIFESTS}" -lt 1 ]]; then
-            echo "::error::release zip ships no mod catalog (mods/packages/*/manifest.toml)" >&2
+            echo "::error::release zip ships no mod catalog (mods/bundled/*/manifest.toml)" >&2
             unzip -l "${ZIP}" | head -40 >&2
             exit 1
           fi
@@ -614,6 +614,13 @@ jobs:
           # selections everybody's defaults.
           if unzip -l "${ZIP}" | grep -q 'state\.toml'; then
             echo "::error::release zip contains mods/state.toml (per-machine state)" >&2
+            exit 1
+          fi
+          # Same rule, other half: mods/installed/ is the launcher-owned tree of
+          # .psxmod archives a developer installed as a player would. Only
+          # mods/bundled/ is build output, and only build output ships.
+          if unzip -l "${ZIP}" | grep -q 'mods/installed/'; then
+            echo "::error::release zip contains mods/installed (per-machine installs)" >&2
             exit 1
           fi
           # Developer-channel packages are unfinished work that ships with
